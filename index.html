@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<!-- saved from url=(0057)https://getbootstrap.com/docs/4.4/examples/sticky-footer/ -->
+<html lang="en" class="h-100">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <title>Друже, чи не вигорів ти часом?</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
+      rel="stylesheet"
+    />
+    <meta name="theme-color" content="#563d7c" />
+
+    <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+      .hidden {
+        display: none;
+      }
+      label {
+        cursor: pointer;
+      }
+      .phase-result {
+        margin-top: 10px;
+      }
+      .phase-result i,
+      .symptom-result i {
+        margin-right: 10px;
+      }
+      .symptom-result i {
+        margin-left: 5px;
+      }
+      .fa-meh {
+        color: #ffc535;
+      }
+      .fa-smile {
+        color: #1dcc1d;
+      }
+      .fa-frown {
+        color: #fc5959;
+      }
+
+      .q-num {
+        display: none;
+      }
+      .debug-mode .q-num {
+        display: initial;
+      }
+      .debug-mode #results i.fas {
+        position: relative;
+      }
+      .debug-mode #results i.fas:after {
+        display: block;
+        content: attr(data-content);
+        position: absolute;
+        left: -30px;
+        top: 0;
+        color: #ccc;
+        font: 13px sans-serif;
+      }
+    </style>
+    <script>
+      const questions = [
+        "Організаційні помилки на роботі постійно змушують мене нервувати, напружуватися, хвилюватися.",
+        "Сьогодні я задоволений своєю професією не менше, аніж на початку кар'єри.",
+        "Я помилився у виборі професії або профілю діяльності(займаю не своє місце).",
+        "Мене хвилює, що я став гірше працювати(менш продуктивно, менш якісно, повільніше).",
+        "Теплота у взаємодії з партнерами сильно залежить від мого настрою.",
+        "Від мене, як від професіонала, мало залежить благополуччя партнерів.",
+        "Коли я приходжу з роботи додому, то якийсь час(години 2-3) мені хочеться побути на самоті, щоб ніхто зі мною не спілкувався.",
+        "Коли я відчуваю втому або напругу, то намагаюся швидше вирішити проблеми партнера( згорнути взаємодію).",
+        "Мені здається, що емоційно я не можу дати колегам те, що необхідно для підтримки оптимального рівня комунікації.",
+        "Моя робота притупляє емоції.",
+        "Я відверто втомився від людських проблем, з якими доводиться стикатися по роботі.",
+        "Трапляється, я пагано засинаю (сплю) з-за переживань, пов'язаних з роботою.",
+        "Взаємодія з партнерами вимагає від мене серйозної напруги.",
+        "Робота з людьми приносить мені все менше задоволення.",
+        "Я змінив би місце роботи, якби з'явилася така можливість.",
+        "Мене часто засмучує те, що я не можу на належному рівні надати професійну підтримку, послугу, допомогу.",
+        "Мені завжди вдається уникати впливу поганого настрою на ділові контакти.",
+        "Мене завжди засмучує ситуація, коли щось не складається у відносинах с діловим партнером.",
+        "Я так втомлююся на роботі, що намагаюся спілкуватися якнайменше.",
+        "Через брак часу, втоми або напруги я часто приділяю партнеру менше уваги, ніж це необхідно.",
+        "Іноді звичайні ситуації спілкування на роботі мене дратують.",
+        "Я спокійно сприймаю обгрунтовані претензії партнерів.",
+        "Спілкування з партнерими спонукає мене уникати людей.",
+        "При згадці про деяких партнерів та колег у мене псується настрій.",
+        "Конфлікти і суперечки з колегами забирають багато сил і емоцій.",
+        "Мені все складніше встановлювати і підтримувати контакти з діловими партнерами.",
+        "Ситуація, що склалася на роботі, мені здається дуже складною і важкою.",
+        "У мене часто виникають тривожні очікування, повязані з роботою: щось має статися, як би не допустити помилки, чи зможу я зробити все як треба, чи не скоротять мене...",
+        "Якщо партнер мені неприємний, то я намагаюся обмежити час спілкування з ним, приділяти йому менше уваги.",
+        'У спілкуванні на роботі я дотримуюся принципу "не роби людям добра - не отримуєш зла".',
+        "Я з радістю розповідаю домашнім про свою роботу.",
+        "Часто бувають дні, коли мій емоційний стан погано позначається на результатах роботи(менше працюю, знижується якість, виникають конфлікти).",
+        "Іноді я відчуваю, що необхідно поспівчувати партнеру, але я не можу цього зробити.",
+        "Я дуже переживаю за свою роботу.",
+        "Партнерам по роботі я віддаю більше уваги і турботи, ніж отримую від них подяки.",
+        "На саму думку про роботу мені стає погано: починає колоти в області серця, підвищується тиск, починає боліти голова.",
+        "У мене хороші стосунки з безпосереднім начальством.",
+        "Я часто радію, коли бачу, що моя робота приносить користь людям.",
+        "Останнім часом мене переслідують невдачі на роботі.",
+        "Деякі аспекти моєї роботи викликають сум і розчарування.",
+        "Часто бувають дні, коли контакти з партнерами складаються набагато гірше, ніж звичайно.",
+        "В даний час проблеми ділових партнерів мене хвилюють набагато менше, ніж зазвичай.",
+        "Втома від роботи призводить до того, що я намагаюся скоротити час спілкування з друзями і знайомими.",
+        "Як правило, я виявляю зацікавленість особистістю партнера більше, ніж це необхідно для справи.",
+        "Зазвичай я приходжу на роботу відпочив, зі свіжими силами, у гарному настрої.",
+        "Часто я ловлю себе на тому, що працюю з партнерами автоматично, без душі.",
+        "У професійному спілкуванні часто зустрічаються настільки неприємні люди, що ти мимоволі бажаєш їм чогось-абищо. ",
+        "Після спілкування з неприємними партнерами у мене буває погіршення фізичного і психічного стану.",
+        "На роботі я постійно відчуваю психічне і фізичне навантаження.",
+        "Успіхи в роботі надихають мене.",
+        "Ситуція на роботі здається мені безвихідною або майже безвихідною.",
+        "Я втратив спокій через роботу.",
+        "Протягом останнього року траплялися скарги на мене з боку партнерів.",
+        "Мені вдається зберегти нерви тільки тому, що багато з того, що відбувається з партнерами, я не приймаю близько до серця.",
+        "Я часто приношу з роботи додому негативні емоції.",
+        "Я часто працюю через силу.",
+        "Раніше я виявляв більше співчуття і був більш уважним до партнерів, ніж зараз.",
+        "У роботі з людьми керуюся принципом: не псуй нерви, бережи здоров'я.",
+        "Іноді я йду на роботу з важким почуттям: як все набридло, що не бачити б нікого і не чути.",
+        "Після напруженого робочого дня я завжди відчуваю себе розбитим.",
+        "Контингент партнерів, з якими я працюю, дуже складний.",
+        "Іноді мені здається, що результати моєї роботи не варті тих сил, які я витрачаю на це.",
+        "Якби мені пощастило з роботою, я був би набагато щасливішим.",
+        "Я в розпачі від того, ща на роботі у мене серйозні проблеми.",
+        "Іноді я веду себе зі своїми партнерами так, як не хотів би, щоб вони поступали зі мною. ",
+        "Мені не подобається, коли партнери розраховують на особливу увагу і поблажливість.",
+        "Зазвичай після робочого дня у мене не вистачає сил займатися домашніми справами.",
+        "Часто я підганяю час: швидше б закінчився робочий день.",
+        "Як правило, мене щиро хвилюють прохання, потреби, стан партнерів.",
+        "Працюючи з людьми, я завжди намагаюся захистити себе від їх страждань і негативних емоцій.",
+        "Робота з людьми(партнерами) мене дуже розчарувала.",
+        "Щоб відновити сили, я часто приймаю ліки.",
+        "Як правило, мій робочий день проходить легко і спокійно.",
+        "Мої вимоги до виконуваної роботи вище, ніж мої досягнення.",
+        "Моя кра'єра склалася вдалою.",
+        "Я дуже нервую з приводу того, що пов'язано з роботою.",
+        "Деяких зі своїх постійних партнерів я не хотів би ні бачити, ні чути.",
+        "Я схвалюю колег, які повністю присвячують себе людям(партнерам), нехтуючи власними інтересами.",
+        "Моя втома на роботі зазвичай майже не відчувається на спілкуванні з домашніми та друзями.",
+        "Якщо це можливо, я приділяю партнеру менше уваги, але так, щоб він не помітив цього.",
+        "Мене часто підводять нерви в спілкуванні з людьми на роботі.",
+        "Я втартив інтерес практично до всього, що відбувається на роботі.",
+        "Робота з людьми погано вплинула на мене як фахівця - я став злим, роздратованим, уникаю емоційних ситуацій.",
+        "Цілком очевидно, що робота з людьми підриває моє здоров'я."
+      ];
+      const answers = {};
+      const symptoms = {
+        "1.1": [
+          { q: 1, positive: true, score: 2 },
+          { q: 13, positive: true, score: 3 },
+          { q: 25, positive: true, score: 2 },
+          { q: 37, positive: false, score: 3 },
+          { q: 49, positive: true, score: 10 },
+          { q: 61, positive: true, score: 5 },
+          { q: 73, positive: false, score: 5 }
+        ],
+        "1.2": [
+          { q: 2, positive: false, score: 3 },
+          { q: 14, positive: true, score: 2 },
+          { q: 26, positive: true, score: 2 },
+          { q: 38, positive: false, score: 10 },
+          { q: 50, positive: false, score: 5 },
+          { q: 62, positive: true, score: 5 },
+          { q: 74, positive: true, score: 3 }
+        ],
+        "1.3": [
+          { q: 3, positive: true, score: 10 },
+          { q: 15, positive: true, score: 5 },
+          { q: 27, positive: true, score: 2 },
+          { q: 39, positive: true, score: 2 },
+          { q: 51, positive: true, score: 5 },
+          { q: 63, positive: true, score: 1 },
+          { q: 75, positive: false, score: 5 }
+        ],
+        "1.4": [
+          { q: 4, positive: true, score: 2 },
+          { q: 16, positive: true, score: 3 },
+          { q: 28, positive: true, score: 5 },
+          { q: 40, positive: true, score: 5 },
+          { q: 52, positive: true, score: 10 },
+          { q: 64, positive: true, score: 2 },
+          { q: 76, positive: true, score: 3 }
+        ],
+        "2.1": [
+          { q: 5, positive: true, score: 5 },
+          { q: 17, positive: false, score: 3 },
+          { q: 29, positive: true, score: 10 },
+          { q: 41, positive: true, score: 2 },
+          { q: 53, positive: true, score: 2 },
+          { q: 65, positive: true, score: 3 },
+          { q: 77, positive: true, score: 5 }
+        ],
+        "2.2": [
+          { q: 6, positive: true, score: 10 },
+          { q: 18, positive: false, score: 3 },
+          { q: 30, positive: true, score: 3 },
+          { q: 42, positive: true, score: 5 },
+          { q: 54, positive: true, score: 2 },
+          { q: 66, positive: true, score: 2 },
+          { q: 78, positive: false, score: 5 }
+        ],
+        "2.3": [
+          { q: 7, positive: true, score: 2 },
+          { q: 19, positive: true, score: 10 },
+          { q: 31, positive: false, score: 2 },
+          { q: 43, positive: true, score: 5 },
+          { q: 55, positive: true, score: 3 },
+          { q: 67, positive: true, score: 3 },
+          { q: 79, positive: false, score: 5 }
+        ],
+        "2.4": [
+          { q: 8, positive: true, score: 5 },
+          { q: 20, positive: true, score: 5 },
+          { q: 32, positive: true, score: 5 },
+          { q: 44, positive: false, score: 2 },
+          { q: 56, positive: true, score: 3 },
+          { q: 68, positive: true, score: 3 },
+          { q: 80, positive: true, score: 10 }
+        ],
+        "3.1": [
+          { q: 9, positive: true, score: 3 },
+          { q: 21, positive: true, score: 2 },
+          { q: 33, positive: true, score: 5 },
+          { q: 45, positive: false, score: 5 },
+          { q: 57, positive: true, score: 3 },
+          { q: 69, positive: false, score: 10 },
+          { q: 81, positive: true, score: 2 }
+        ],
+        "3.2": [
+          { q: 10, positive: true, score: 2 },
+          { q: 22, positive: true, score: 3 },
+          { q: 34, positive: false, score: 2 },
+          { q: 46, positive: true, score: 3 },
+          { q: 58, positive: true, score: 5 },
+          { q: 70, positive: true, score: 5 },
+          { q: 82, positive: true, score: 10 }
+        ],
+        "3.3": [
+          { q: 11, positive: true, score: 5 },
+          { q: 23, positive: true, score: 3 },
+          { q: 35, positive: true, score: 3 },
+          { q: 47, positive: true, score: 5 },
+          { q: 59, positive: true, score: 5 },
+          { q: 71, positive: true, score: 2 },
+          { q: 83, positive: true, score: 10 }
+        ],
+        "3.4": [
+          { q: 12, positive: true, score: 3 },
+          { q: 24, positive: true, score: 2 },
+          { q: 36, positive: true, score: 5 },
+          { q: 48, positive: true, score: 3 },
+          { q: 60, positive: true, score: 2 },
+          { q: 72, positive: true, score: 10 },
+          { q: 84, positive: true, score: 5 }
+        ]
+      };
+
+      document.addEventListener("DOMContentLoaded", function(event) {
+        addAllQuestions();
+        hideLoading();
+        document
+          .getElementById("form")
+          .addEventListener("submit", handleFormSubmit);
+        hideLoading();
+        document
+          .getElementById("debug-mode")
+          .addEventListener("click", toggleDebugMode);
+      });
+
+      function toggleDebugMode(event) {
+        document.getElementById("main-body").className = `container ${
+          event.target.checked ? "debug-mode" : ""
+        }`;
+      }
+
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        showResults();
+        analyzeAnswers();
+      }
+
+      function showResults() {
+        document.getElementById("results").className = "results mb-3";
+      }
+
+      function hideLoading() {
+        document.getElementById("loading-body").className = "hidden";
+        document.getElementById("main-body").className = "container";
+      }
+
+      function addAllQuestions() {
+        const questionHolder = document.getElementById("questions");
+        for (let i = 0; i < questions.length; i++) {
+          questionHolder.appendChild(createQuestion(i + 1, questions[i]));
+        }
+        handleChecboxEvents();
+      }
+
+      function handleChecboxEvents() {
+        const checkboxes = document.querySelectorAll("#questions input");
+        checkboxes.forEach(function(checkbox) {
+          checkbox.addEventListener("change", function() {
+            answers[this.getAttribute("data-index")] = this.checked;
+            analyzeAnswers();
+          });
+        });
+      }
+
+      function createQuestion(index, question) {
+        const formGroup = document.createElement("div");
+        formGroup.className = "form-group form-check";
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.className = "form-check-input";
+        input.id = `q-${index}`;
+        input.setAttribute("data-index", `${index}`);
+        const label = document.createElement("label");
+        label.className = "form-check-label";
+        label.innerHTML = `<span class="text-muted q-num">${index}.</span> ${question}`;
+        label.htmlFor = input.id;
+        formGroup.appendChild(input);
+        formGroup.appendChild(label);
+        return formGroup;
+      }
+
+      function analyzeAnswers() {
+        const phases = Object.keys(symptoms).reduce((phases, symId) => {
+          const symptomTotal = symptoms[symId].reduce(
+            (acc, current) =>
+              acc +
+              ((current.positive && answers[current.q]) ||
+              (!current.positive && !answers[current.q])
+                ? current.score
+                : 0),
+            0
+          );
+          const sym = document.getElementById(`sym-${symId}`);
+          let icon = "fa-smile";
+          if (symptomTotal >= 20) icon = "fa-meh";
+          if (symptomTotal >= 25) icon = "fa-frown";
+          sym.className = `fas ${icon}`;
+          sym.setAttribute("data-content", symptomTotal);
+
+          const phaseId = symId.split(".")[0];
+          return {
+            ...phases,
+            [phaseId]: (phases[phaseId] || 0) + symptomTotal
+          };
+        }, {});
+
+        // phases
+        for (let i = 1; i <= 3; i++) {
+          const ph = document.getElementById(`ph-${i}`);
+          const phaseTotal = phases[i];
+          let icon = "fa-smile";
+          if (phaseTotal >= 58) icon = "fa-meh";
+          if (phaseTotal >= 66) icon = "fa-frown";
+          ph.className = `fas ${icon}`;
+          ph.setAttribute("data-content", phaseTotal);
+        }
+      }
+    </script>
+    <!-- Custom styles for this template -->
+    <link href="sticky-footer.css" rel="stylesheet" />
+  </head>
+  <body class="d-flex flex-column h-100">
+    <!-- Begin page content -->
+    <main role="main" class="flex-shrink-0">
+      <div class="container" id="loading-body">
+        <div class="text-muted d-flex justify-content-center mt-5">
+          Завантаження...
+        </div>
+      </div>
+      <div class="container hidden" id="main-body">
+        <h1 class="mt-5">Друже, чи не вигорів ти часом?</h1>
+        <p class="lead">
+          Виділи 5 хвилин часу та дійзнайся чи є в тебе симптоми вигорання
+        </p>
+        <p class="text-muted">
+          Якщо задумався, то обирай ту відповідь, яка першою прийшла в голову.
+        </p>
+        <form id="form" class="mb-3 mt-5">
+          <div id="questions"></div>
+          <button type="submit" class="btn btn-primary">
+            Показати результати
+          </button>
+        </form>
+        <div id="results" class="results mb-3 hidden">
+          <h1 class="mt-5">Результати</h1>
+          <h3 class="phase-result">
+            <i class="fas fa-smile" id="ph-1"></i>Фаза: Напруження
+          </h3>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-1.1"></i>Симптом: Переживання
+            психотравмуючих обставин
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-1.2"></i>Симптом: Незадоволення
+            собою
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-1.3"></i>Симптом: "Загнаність в кут"
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-1.4"></i>Симптом: Тривога і депресія
+          </div>
+
+          <h3 class="phase-result">
+            <i class="fas fa-smile" id="ph-2"></i>Фаза: Резистенція
+          </h3>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-2.1"></i>Симптом: Неадекватне
+            вибіркове емоційне реагування обставин
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-2.2"></i>Симптом: Емоційно-моральна
+            дезорієнтація
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-2.3"></i>Симптом: Розширення сфери
+            економії емоцій
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-2.4"></i>Симптом: Редукція
+            професійних обов'язків
+          </div>
+
+          <h3 class="phase-result">
+            <i class="fas fa-smile" id="ph-3"></i>Фаза: Виснаження
+          </h3>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-3.1"></i>Симптом: Емоційний дефіцит
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-3.2"></i>Симптом: Емоційне
+            відчуження
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-3.3"></i>Симптом: Приватне
+            відчуження (деперсоналізація) емоцій
+          </div>
+          <div class="symptom-result">
+            <i class="fas fa-smile" id="sym-3.4"></i>Симптом: Психосоматичні та
+            психовегетативні порушення
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="footer mt-auto py-3">
+      <div class="container">
+        <div class="text-muted d-flex justify-content-between bd-highlight">
+          <div class="p-2 bd-highlight">
+            Code is on Github
+          </div>
+          <div class="p-2 bd-highlight ">
+            <input type="checkbox" id="debug-mode" />
+            <label for="debug-mode">Debug mode</label>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
